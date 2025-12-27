@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="record-card">
+    <header>
+        <h2>{{ record.title }}</h2>
+        <small>記録ID: {{ record.id }}</small>
+    </header>
+    <p>{{ record.body }}</p>
+    {% if record.source_url %}
+        <p>Source: <a href="{{ record.source_url }}" target="_blank" rel="noopener">{{ record.source_url }}</a></p>
+    {% endif %}
+    <ul>
+        <li>time_occurred_start: {{ record.time_occurred_start or "未設定" }}</li>
+        <li>time_occurred_end: {{ record.time_occurred_end or "未設定" }}</li>
+        <li>created_at: {{ record.created_at }} UTC</li>
+    </ul>
+    <h4>5W1H/時間曖昧性 (AI補助、確定ではない)</h4>
+    <ul>
+        <li>when: {{ analysis.when or "N/A" }}</li>
+        <li>where: {{ analysis.where or "N/A" }}</li>
+        <li>ambiguous: {{ analysis.time_ambiguity or "なし" }}</li>
+    </ul>
+</article>
+
+<section>
+    <h3>Review Requests</h3>
+    <form method="post" action="/records/{{ record.id }}/review-requests">
+        <p>検証期間: {{ default_resolution_hours }}h (作成時にexpires_atに設定)</p>
+        <button type="submit">Review Requestを作成</button>
+    </form>
+    {% if review_requests %}
+        <ul>
+            {% for rr in review_requests %}
+            <li>
+                {{ rr.status }} | expires_at: {{ rr.expires_at }} | created_at: {{ rr.created_at }}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>まだReview Requestがありません。</p>
+    {% endif %}
+</section>
+
+<a href="/records">← Back to list</a>
+{% endblock %}
