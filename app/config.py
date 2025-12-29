@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     database_url: str = Field(..., env="DATABASE_URL")
     app_env: str = Field("local", env="APP_ENV")
     review_request_duration_hours: int = Field(72, env="REVIEW_REQUEST_DURATION_HOURS")
+    session_secret: str = Field("change-me-session-secret", env="SESSION_SECRET")
+    initial_vp: int = Field(10, env="INITIAL_VP")
     base_url: AnyHttpUrl | None = None
     model_config = SettingsConfigDict(
         env_file=".env",

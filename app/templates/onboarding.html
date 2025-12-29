@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h2>Onboarding</h2>
+    <p>Truburnは「真実を決める」場ではなく、検証可能な形で曖昧さを減らす補助装置です。</p>
+    <ul>
+        <li>Recordは出来事の記録。断定せず、観測した事実を書く。</li>
+        <li>時間幅（Resolution）を必ず設定し、解像度を明示する。</li>
+        <li>Review RequestはVPを消費し、反証Evidence URLと200文字以上の理由が必須。</li>
+        <li>72時間で自動確定。反証あり→FALSIFIED / 反証なし→VERIFIED。</li>
+    </ul>
+    <div class="chip-row">
+        <a class="pill" href="/feed/live">Live Feed</a>
+        <a class="pill" href="/report">新規Recordを投稿</a>
+        <a class="pill" href="/vault">Vaultを見る</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h2>Mock Wallet Login</h2>
+    <p class="muted">UUIDベースの擬似ウォレットを発行し、VPを初期付与します。金銭・トークン要素はありません。</p>
+    {% if current_user %}
+        <p class="muted">ログイン中: {{ current_user.display_name }} / VP {{ current_user.vp_balance }}</p>
+        <a class="pill" href="/onboarding">Onboardingへ</a>
+    {% else %}
+        <form method="post" action="/auth/mock">
+            <label>表示名（任意）
+                <input type="text" name="display_name" placeholder="例: Operator-01">
+            </label>
+            <p class="muted">初期VP: {{ initial_vp }}。レビュー申請でVPを消費します。</p>
+            <button class="primary" type="submit">Mock Walletを生成</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

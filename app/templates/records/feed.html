@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div class="record-meta">
+        <h2 style="margin:0;">Feed: {{ bucket }}</h2>
+        <span class="muted">未検証(Live) / 検証中(Investigating) / 確定(Archive)</span>
+    </div>
+    <div class="chip-row">
+        <a class="pill" href="/feed/live">Live</a>
+        <a class="pill" href="/feed/investigating">Investigating</a>
+        <a class="pill" href="/feed/archive">Archive</a>
+        <a class="pill" href="/report">新規Recordを投稿</a>
+    </div>
+</div>
+
+{% if records %}
+    <div class="grid">
+        {% for record in records %}
+        <article class="panel record-card">
+            <div class="record-meta">
+                <span class="badge">{{ record.status }}</span>
+                <span class="pill">Resolution L{{ record.resolution_level }} / x{{ '%.1f' % record.resolution_multiplier }}</span>
+                <span class="pill">{{ record.time_occurred_start }} → {{ record.time_occurred_end }}</span>
+            </div>
+            <h3><a href="/case/{{ record.id }}">{{ record.title }}</a></h3>
+            <p>{{ record.body[:200] }}{% if record.body|length > 200 %}...{% endif %}</p>
+            <div class="record-meta">
+                <span class="muted">created: {{ record.created_at }}</span>
+                {% if analysis[record.id].time_ambiguity %}
+                    <span class="badge red">時間曖昧: {{ analysis[record.id].time_ambiguity }}</span>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="panel">
+        <p class="muted">まだRecordがありません。</p>
+    </div>
+{% endif %}
+{% endblock %}

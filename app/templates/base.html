@@ -1,25 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Truburn Phase1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
-    <style>
-        body { padding: 1.5rem; }
-        .record-card { border: 1px solid #e0e0e0; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;}
-        .badge { background: #eef; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem;}
-        .slider-row { display: flex; align-items: center; gap: 0.5rem; }
-    </style>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-<main class="container">
-    <header>
-        <h1>Truburn Phase1</h1>
-        <p>情報の解像度を可視化する記録基盤（Record-first, AIは補助）。</p>
+<div class="page">
+    <header class="topbar">
+        <div class="brand">
+            <div class="dot"></div>
+            <a href="/feed/live" class="brand-name">Truburn Phase1</a>
+            <span class="tagline">Record-first / Resolution-aware / AIは補助</span>
+        </div>
+        <nav class="nav">
+            <a href="/feed/live">Live</a>
+            <a href="/feed/investigating">Investigating</a>
+            <a href="/feed/archive">Archive</a>
+            <a href="/report">Report</a>
+            <a href="/vault">Vault</a>
+            <a href="/about">About</a>
+        </nav>
+        <div class="user">
+            {% if current_user %}
+                <span class="user-chip">🪪 {{ current_user.display_name }}</span>
+                <span class="vp-chip">VP {{ current_user.vp_balance }}</span>
+                <form method="post" action="/auth/logout">
+                    <button class="ghost" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a class="ghost" href="/auth">Mock Wallet Login</a>
+            {% endif %}
+        </div>
     </header>
-    {% block content %}{% endblock %}
-</main>
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <p>Truburn Phase1: 検証できる形で曖昧さを減らす装置。真偽の断定はしない。</p>
+    </footer>
+</div>
 </body>
 </html>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h2>Recordを投稿</h2>
+    <p class="muted">出来事をRecordとして保存し、時間解像度を明示します。真偽を断定せず、検証可能な形に。</p>
+</div>
+
+<div class="panel">
+    <form method="post" action="/records">
+        <label>Title
+            <input type="text" name="title" required maxlength="200" placeholder="例: XXビルで火災報告">
+        </label>
+        <label>Body
+            <textarea name="body" required placeholder="5W1Hを意識して事実ベースで記述。"></textarea>
+        </label>
+        <label>Evidence URL
+            <input type="url" name="evidence_url" placeholder="https://example.com/primary">
+        </label>
+        <div class="grid two">
+            <label>Center datetime (UTC)
+                <input
+                    type="datetime-local"
+                    name="center"
+                    required
+                    value="{{ center.astimezone().replace(tzinfo=None).isoformat(timespec='minutes') }}"
+                    hx-get="/records/resolution-preview"
+                    hx-target="#resolution-preview"
+                    hx-trigger="change[validity.valid]"
+                    hx-params="serialize"
+                >
+            </label>
+            <div>
+                <label>Resolution window (hours)</label>
+                <div class="slider-row">
+                    <input
+                        type="range"
+                        id="resolution_hours"
+                        name="resolution_hours"
+                        min="1"
+                        max="168"
+                        step="1"
+                        value="{{ resolution_hours }}"
+                        hx-get="/records/resolution-preview"
+                        hx-target="#resolution-preview"
+                        hx-trigger="change"
+                        hx-params="serialize"
+                    >
+                    <span id="resolution_value">{{ resolution_hours }}</span>h
+                </div>
+                <p class="muted small">時間幅が短いほど解像度が高くなり、倍率表示が上がります。</p>
+            </div>
+        </div>
+        <div id="resolution-preview">
+            {% include "partials/resolution_preview.html" %}
+        </div>
+        <button class="primary" type="submit">Recordを保存</button>
+    </form>
+</div>
+
+<script>
+    const slider = document.getElementById('resolution_hours');
+    const valueSpan = document.getElementById('resolution_value');
+    slider?.addEventListener('input', () => valueSpan.textContent = slider.value);
+</script>
+{% endblock %}

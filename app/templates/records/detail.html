@@ -1,45 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
-<article class="record-card">
-    <header>
-        <h2>{{ record.title }}</h2>
-        <small>記録ID: {{ record.id }}</small>
-    </header>
+<div class="panel record-card">
+    <div class="record-meta">
+        <span class="pill">Record ID: {{ record.id }}</span>
+        <span class="pill">Status: {{ record.status }}</span>
+        <span class="pill">Resolution L{{ record.resolution_level }} / x{{ '%.1f' % record.resolution_multiplier }}</span>
+        <span class="pill">Window: {{ record.time_occurred_start }} → {{ record.time_occurred_end }}</span>
+    </div>
+    <h2>{{ record.title }}</h2>
     <p>{{ record.body }}</p>
-    {% if record.source_url %}
-        <p>Source: <a href="{{ record.source_url }}" target="_blank" rel="noopener">{{ record.source_url }}</a></p>
+    {% if record.evidence_url %}
+        <p class="muted">Evidence URL: <a href="{{ record.evidence_url }}" target="_blank" rel="noopener">{{ record.evidence_url }}</a></p>
     {% endif %}
-    <ul>
-        <li>time_occurred_start: {{ record.time_occurred_start or "未設定" }}</li>
-        <li>time_occurred_end: {{ record.time_occurred_end or "未設定" }}</li>
-        <li>created_at: {{ record.created_at }} UTC</li>
+    <div class="divider"></div>
+    <h4>AI補助 (5W1H/時間曖昧性のみ、断定なし)</h4>
+    <ul class="list-inline">
+        <li class="highlight">when: {{ analysis.when or "N/A" }}</li>
+        <li class="highlight">where: {{ analysis.where or "N/A" }}</li>
+        <li class="highlight">ambiguous: {{ analysis.time_ambiguity or "なし" }}</li>
     </ul>
-    <h4>5W1H/時間曖昧性 (AI補助、確定ではない)</h4>
-    <ul>
-        <li>when: {{ analysis.when or "N/A" }}</li>
-        <li>where: {{ analysis.where or "N/A" }}</li>
-        <li>ambiguous: {{ analysis.time_ambiguity or "なし" }}</li>
-    </ul>
-</article>
+</div>
 
-<section>
-    <h3>Review Requests</h3>
-    <form method="post" action="/records/{{ record.id }}/review-requests">
-        <p>検証期間: {{ default_resolution_hours }}h (作成時にexpires_atに設定)</p>
-        <button type="submit">Review Requestを作成</button>
-    </form>
-    {% if review_requests %}
-        <ul>
-            {% for rr in review_requests %}
-            <li>
-                {{ rr.status }} | expires_at: {{ rr.expires_at }} | created_at: {{ rr.created_at }}
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>まだReview Requestがありません。</p>
-    {% endif %}
-</section>
+<div class="grid two">
+    <div class="panel">
+        <h3>Review Requests</h3>
+        <p class="muted">検証期間: {{ default_resolution_hours }}h / VP消費: 1</p>
+        {% if current_user %}
+            <form method="post" action="/case/{{ record.id }}/review-requests">
+                <label>理由 (200文字以上)
+                    <textarea name="reason" minlength="200" required placeholder="反証理由。5W1Hと因果の不足を具体的に。"></textarea>
+                </label>
+                <label>反証Evidence (URL必須)
+                    <input type="url" name="evidence_url" required placeholder="https://example.com/evidence">
+                </label>
+                <label>これは反証ですか？</label>
+                <div class="chip-row">
+                    <label class="pill"><input type="radio" name="is_counter_evidence" value="true" checked> 反証 (デフォルト)</label>
+                    <label class="pill"><input type="radio" name="is_counter_evidence" value="false"> 反証なし/補足</label>
+                </div>
+                <button class="primary" type="submit">Review Requestを送信</button>
+            </form>
+        {% else %}
+            <p class="muted">レビューを送るには <a href="/auth">Mock Walletでログイン</a> してください。</p>
+        {% endif %}
+    </div>
+    <div class="panel">
+        {% if review_requests %}
+            <ul>
+                {% for rr in review_requests %}
+                    <li class="divider"></li>
+                    <div class="record-meta">
+                        <span class="badge">{{ rr.status }}</span>
+                        {% if rr.verdict %}
+                            <span class="badge {{ 'red' if rr.verdict == 'falsified' else 'green' }}">verdict: {{ rr.verdict }}</span>
+                        {% endif %}
+                        <span class="pill">expires: {{ rr.expires_at }}</span>
+                    </div>
+                    <p class="muted small">Evidence: <a href="{{ rr.evidence_url }}" target="_blank" rel="noopener">{{ rr.evidence_url }}</a></p>
+                    <p class="small">{{ rr.reason }}</p>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">まだReview Requestがありません。</p>
+        {% endif %}
+    </div>
+</div>
 
-<a href="/records">← Back to list</a>
+<a class="ghost" href="/feed/live">← Back to feed</a>
 {% endblock %}

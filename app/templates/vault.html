@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h2>Vault</h2>
+    <p class="muted">マイページ。Mock Wallet残高と履歴を確認できます。</p>
+    <div class="chip-row">
+        <span class="pill">User: {{ current_user.display_name }}</span>
+        <span class="pill">Wallet: {{ current_user.wallet_address }}</span>
+        <span class="pill">VP: {{ current_user.vp_balance }}</span>
+    </div>
+</div>
+
+<div class="grid two">
+    <div class="panel">
+        <h3>My Records</h3>
+        {% if records %}
+            <ul>
+            {% for record in records %}
+                <li class="divider"></li>
+                <strong>{{ record.title }}</strong>
+                <div class="record-meta">
+                    <span class="badge">{{ record.status }}</span>
+                    <span class="pill">Resolution L{{ record.resolution_level }}</span>
+                    <a href="/case/{{ record.id }}">詳細</a>
+                </div>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">まだ投稿がありません。</p>
+        {% endif %}
+    </div>
+    <div class="panel">
+        <h3>My Review Requests</h3>
+        {% if review_requests %}
+            <ul>
+            {% for rr in review_requests %}
+                <li class="divider"></li>
+                <div class="record-meta">
+                    <span class="badge">{{ rr.status }}</span>
+                    {% if rr.verdict %}<span class="badge {{ 'red' if rr.verdict == 'falsified' else 'green' }}">verdict: {{ rr.verdict }}</span>{% endif %}
+                    <span class="pill">expires: {{ rr.expires_at }}</span>
+                </div>
+                <p class="small">Record: <a href="/case/{{ rr.record_id }}">{{ rr.record_id }}</a></p>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">まだレビュー申請がありません。</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="panel">
+    <h3>VP Ledger</h3>
+    {% if transactions %}
+        <ul>
+        {% for tx in transactions %}
+            <li class="divider"></li>
+            <div class="record-meta">
+                <span class="pill">Δ {{ tx.delta }}</span>
+                <span class="pill">{{ tx.note }}</span>
+                <span class="muted">{{ tx.created_at }}</span>
+            </div>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">トランザクションなし。</p>
+    {% endif %}
+</div>
+{% endblock %}

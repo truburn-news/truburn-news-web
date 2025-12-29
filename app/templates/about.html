@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h2>About Truburn Phase1</h2>
+    <p>Record-firstプロトタイプ。ウォレット認証はモック、トークン・換金・投票なし。目的は「検証できる形で曖昧さを減らす」こと。</p>
+    <ul>
+        <li>AIの役割は時刻の曖昧さ検出・5W1H欠落の警告のみ。真偽判定はしない。</li>
+        <li>Resolutionを整数1-5で自動算出し、倍率表示で解像度を示す。</li>
+        <li>Reviewは72時間で自動確定。反証EvidenceがあればFALSIFIED、なければVERIFIED。</li>
+        <li>VPは内部単位。Review申請時に消費。金銭・トークン要素なし。</li>
+    </ul>
+    <p class="muted small">Truburn Phase1は「ニュースサイト」ではなく、検証補助のための記録基盤です。</p>
+</div>
+{% endblock %}

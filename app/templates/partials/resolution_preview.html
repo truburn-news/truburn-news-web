@@ -1,5 +1,11 @@
 {% set start_iso = start.astimezone().replace(tzinfo=None).isoformat(timespec='minutes') %}
 {% set end_iso = end.astimezone().replace(tzinfo=None).isoformat(timespec='minutes') %}
-<p>time_occurred_start: {{ start }} | time_occurred_end: {{ end }}</p>
+<div class="alert">
+    <div class="chip-row">
+        <span class="pill">start: {{ start }}</span>
+        <span class="pill">end: {{ end }}</span>
+        <span class="pill">Resolution L{{ resolution_level }} / x{{ '%.1f' % resolution_multiplier }}</span>
+    </div>
+</div>
 <input type="hidden" name="time_occurred_start" value="{{ start_iso }}">
 <input type="hidden" name="time_occurred_end" value="{{ end_iso }}">
